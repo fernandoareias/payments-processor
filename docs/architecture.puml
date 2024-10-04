@@ -1,0 +1,37 @@
+@startuml
+!include https://raw.githubusercontent.com/kirchsth/C4-PlantUML/extended/C4_Container.puml
+
+AddRelTag("sync", $textColor="black", $lineColor="black", $lineStyle = DashedLine())
+AddRelTag("async", $textColor="blue", $lineColor="blue", $lineStyle = SolidLine())
+
+LAYOUT_WITH_LEGEND()
+
+title Payment System Architecture - Simplified
+
+Person(customer, "Customer", "Submits a payment request.")
+System_Ext(paymentGateway, "BACEN", "Processes payment orders.")
+
+System_Boundary(container_boundary, "Payment Service") {
+    Container(webapi, "Web API", "Spring Boot REST API", "Receives and queues payment requests.")
+    Container(worker, "Workers", "Spring Batch or RabbitMQ Consumers", "Processes queued payments.")
+    ContainerDb(database, "PostgreSQL", "Stores payment data.")
+    ContainerQueue(queue, "Message Queue", "RabbitMQ", "Stores payment requests for processing.")
+    Container(exchange, "Exchange", "RabbitMQ Topic Exchange", "Publishes 'PagamentoProcessadoEvent' after processing.")
+}
+
+System_Boundary(account_boundary, "Bank Account Service") {
+    Container(queryMicroservice, "Account Query Microservice", "Spring Boot Service", "Consumes 'PagamentoProcessadoEvent' and updates account balance.")
+    ContainerDb(materializedView, "Materialized View", "PostgreSQL", "Stores account balances and transaction history.")
+}
+
+Rel(customer, webapi, "Submits payment request", "HTTPS", $tags="sync")
+Rel(webapi, queue, "Enqueues payment request", "AMQP", $tags="async")
+Rel(worker, queue, "Fetches payment request", "AMQP", $tags="async")
+Rel(worker, paymentGateway, "Processes payment in BACEN", "HTTPS", $tags="sync")
+Rel(webapi, database, "Stores payment data", "JDBC", $tags="sync")
+Rel(worker, database, "Updates payment status", "JDBC", $tags="sync")
+Rel(worker, exchange, "Publishes 'PagamentoProcessadoEvent'", "AMQP", $tags="async")
+Rel(queryMicroservice, exchange, "Consumes 'PagamentoProcessadoEvent'", "AMQP", $tags="async")
+Rel(queryMicroservice, materializedView, "Updates account balance and transaction history", "JDBC", $tags="sync")
+
+@enduml

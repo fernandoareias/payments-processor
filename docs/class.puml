@@ -1,0 +1,37 @@
+@startuml
+!define C4P https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master
+!includeurl C4P/C4_Container.puml
+!includeurl C4P/C4_Person.puml
+!includeurl C4P/C4_Enterprise_Architect.puml
+!includeurl C4P/C4_Component.puml
+
+' Define the abstract class Payment
+class Payment {
+    -UUID paymentId
+    -BigDecimal amount
+    -List<Processor> processors
+    +process(): void
+}
+
+' Define the concrete class CreditCardPayment extending Payment
+class CreditCardPayment extends Payment {
+    +String cardNumber
+    +String cardExpiry
+    +String cardCVC
+}
+
+' Define the PaymentProcessor class
+class PaymentProcessor {
+    +processPayment(Payment payment): void
+    +validatePayment(Payment payment): boolean
+}
+
+' Define the Processor class representing a list of payment strategies
+class Processor {
+}
+
+' Define relationships
+Payment <|-- CreditCardPayment
+Processor -- PaymentProcessor
+Processor -- Payment
+@enduml

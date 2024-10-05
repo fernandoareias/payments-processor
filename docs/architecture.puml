@@ -20,7 +20,7 @@ System_Boundary(container_boundary, "Payment Service") {
 }
 
 System_Boundary(account_boundary, "Bank Account Service") {
-    Container(queryMicroservice, "Account Query Microservice", "Spring Boot Service", "Consumes 'PagamentoProcessadoEvent' and updates account balance.")
+    Container(account_ms, "Account Microservice", "Spring Boot Service", "Consumes 'PagamentoProcessadoEvent' and updates account balance.")
     ContainerDb(materializedView, "Materialized View", "PostgreSQL", "Stores account balances and transaction history.")
 }
 
@@ -31,7 +31,7 @@ Rel(worker, paymentGateway, "Processes payment in BACEN", "HTTPS", $tags="sync")
 Rel(webapi, database, "Stores payment data", "JDBC", $tags="sync")
 Rel(worker, database, "Updates payment status", "JDBC", $tags="sync")
 Rel(worker, exchange, "Publishes 'PagamentoProcessadoEvent'", "AMQP", $tags="async")
-Rel(queryMicroservice, exchange, "Consumes 'PagamentoProcessadoEvent'", "AMQP", $tags="async")
-Rel(queryMicroservice, materializedView, "Updates account balance and transaction history", "JDBC", $tags="sync")
+Rel(account_ms, exchange, "Consumes 'PagamentoProcessadoEvent'", "AMQP", $tags="async")
+Rel(account_ms, materializedView, "Updates account balance and transaction history", "JDBC", $tags="sync")
 
 @enduml

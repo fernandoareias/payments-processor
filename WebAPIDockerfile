@@ -1,0 +1,26 @@
+# Stage 1: Build do projeto core
+FROM maven:3.8.8-eclipse-temurin-21 AS build-core
+WORKDIR /app/core
+COPY ./src/core/pom.xml .  # Copia o pom.xml do core
+COPY ./src/core/src ./src   # Copia os arquivos do código fonte do core
+RUN mvn clean install -DskipTests
+
+# Stage 2: Build do projeto webapi
+FROM maven:3.8.8-eclipse-temurin-21 AS build-webapi
+WORKDIR /app/webapi
+COPY ./src/webapi/pom.xml .  # Copia o pom.xml do webapi
+COPY ./src/webapi/src ./src   # Copia os arquivos do código fonte do webapi
+RUN mvn dependency:go-offline
+
+# Copiar o core compilado para o classpath do projeto webapi
+COPY --from=build-core /root/.m2/repository/com/fernando/payments/processor/core/1.0.0/core-1.0.0.jar /root/.m2/repository/com/fernando/payments/processor/core/1.0.0/core-1.0.0.jar
+
+# Empacotar o projeto webapi
+RUN mvn clean package -DskipTests
+
+# Stage 3: Imagem final para execução
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=build-webapi /app/webapi/target/webapi-0.0.1-SNAPSHOT.jar /app/webapi.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/webapi.jar"]

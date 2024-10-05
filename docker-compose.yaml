@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "Postgres2022!"
+    ports:
+      - "5432:5432"
+
+  spring-boot-webapi:
+    build:
+      context: .
+      dockerfile: WebAPIDockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres  # Espera o PostgreSQL estar em execução
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Postgres2022!

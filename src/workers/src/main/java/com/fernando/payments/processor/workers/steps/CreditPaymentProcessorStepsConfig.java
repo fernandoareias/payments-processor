@@ -15,6 +15,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 public class CreditPaymentProcessorStepsConfig {
 
     @Bean
+    public CreditPaymentProcessor processor() {
+        return new CreditPaymentProcessor();
+    }
+
+    @Bean
     public Step creditPaymentProcessorSteps(JobRepository jobRepository,
                                             DataSourceTransactionManager transactionManager,
                                             JdbcCursorItemReader<CreditCardPayment> reader,

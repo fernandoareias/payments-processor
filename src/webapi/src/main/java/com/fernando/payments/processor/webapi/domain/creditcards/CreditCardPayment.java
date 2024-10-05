@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Table(name = "DB_CREDIT_CARD_PAYMENTS")
 @Entity
-@AllArgsConstructor
 @Getter
 @Setter
 public class CreditCardPayment extends AggregateRoot {

@@ -22,7 +22,7 @@ public class JdbcCreditCardPaymentProcessorConfig {
         return new JdbcCursorItemReaderBuilder<CreditCardPayment>()
                 .name("jdbcCreditPaymentProcessorReader")
                 .dataSource(dataSource)
-                .sql("SELECT * FROM db_credit_card_payments WHERE status = '8'")
+                .sql("SELECT * FROM postgres.public.db_credit_card_payments WHERE status = '8'")
                 .rowMapper(rowMapper())
                 .build();
     }

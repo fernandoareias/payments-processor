@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class JdbcCreditPaymentProcessorWriterConfig {
     @Bean
     public ItemWriter<CreditCardPayment> jdbcCursorWriter() {
+        System.out.println("ESCREVEU");
         return clientes -> clientes.forEach(System.out::println);
     }
 }

@@ -22,7 +22,6 @@ public class MediatorConfiguration {
         Map<Class<?>, QueryHandler<?, ?>> queryHandlers = new HashMap<>();
 
         commandHandlers.put(ProcessCreditCardPaymentCommand.class, processCreditCardPaymentCommandHandler);
-        //queryHandlers.put(SomeQuery.class, someQueryHandler);
 
 
         return new SimpleMediator(commandHandlers, queryHandlers);

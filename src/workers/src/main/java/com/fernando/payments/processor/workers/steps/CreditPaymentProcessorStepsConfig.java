@@ -1,6 +1,6 @@
 package com.fernando.payments.processor.workers.steps;
 
-import com.fernando.payments.processor.workers.dominio.creditcards.CreditCardPayment;
+import com.fernando.payments.processor.core.domain.CreditCardPayment;
 import com.fernando.payments.processor.workers.processors.CreditPaymentProcessor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -27,7 +27,7 @@ public class CreditPaymentProcessorStepsConfig {
                                             ItemWriter<CreditCardPayment> writer) {
 
         return new StepBuilder("creditPaymentProcessorSteps", jobRepository)
-                .<CreditCardPayment, CreditCardPayment> chunk(3, transactionManager)
+                .<CreditCardPayment, CreditCardPayment> chunk(100, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

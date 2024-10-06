@@ -1,4 +1,4 @@
-package com.fernando.payments.processor.webapi.domain.creditcards.enums;
+package com.fernando.payments.processor.core.domain.enums;
 
 public enum PaymentStatus {
     /**
@@ -54,5 +54,14 @@ public enum PaymentStatus {
 
     public int getCode() {
         return code;
+    }
+
+    public static PaymentStatus fromCode(int code) {
+        for (PaymentStatus status : PaymentStatus.values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Invalid status code: " + code);
     }
 }

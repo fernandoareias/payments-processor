@@ -1,11 +1,7 @@
-package com.fernando.payments.processor.core.domain;
+package com.fernando.payments.processor.core.domain.comon;
 
 import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.util.UUID;
 
 
 @MappedSuperclass

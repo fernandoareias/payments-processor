@@ -1,4 +1,4 @@
-package com.fernando.payments.processor.core.domain;
+package com.fernando.payments.processor.core.domain.comon;
 
 import com.fernando.payments.processor.core.common.Message;
 import lombok.AllArgsConstructor;

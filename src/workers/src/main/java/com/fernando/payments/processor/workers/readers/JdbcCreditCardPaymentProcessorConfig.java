@@ -1,6 +1,7 @@
 package com.fernando.payments.processor.workers.readers;
 
-import com.fernando.payments.processor.workers.dominio.creditcards.CreditCardPayment;
+import com.fernando.payments.processor.core.domain.CreditCardPayment;
+import com.fernando.payments.processor.core.domain.enums.PaymentStatus;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 @Configuration
 public class JdbcCreditCardPaymentProcessorConfig {
@@ -31,25 +33,25 @@ public class JdbcCreditCardPaymentProcessorConfig {
         return new BeanPropertyRowMapper<CreditCardPayment>() {
             @Override
             public CreditCardPayment mapRow(ResultSet rs, int rowNumber) throws SQLException {
-                if (rs.getRow() == 11) {
-                    String email = rs.getString("email");
-                    // Log the invalid client information
-                    System.err.println(String.format("Encerrando a execução - Cliente inválido: %s", email));
-                    throw new SQLException(String.format("Cliente inválido: %s", email));
-                }
-                return clienteRowMapper(rs);
+
+                var payment =  clienteRowMapper(rs);
+
+                return payment;
             }
 
             private CreditCardPayment clienteRowMapper(ResultSet rs) throws SQLException {
-                return CreditCardPayment.builder()
-                        .build();
-//                CreditCardPayment creditCardPayment = new CreditCardPayment();
-//                cliente.setNome(rs.getString("nome"));
-//                cliente.setSobrenome(rs.getString("sobrenome"));
-//                cliente.setIdade(rs.getString("idade"));
-//                cliente.setEmail(rs.getString("email"));
-//
 
+                return CreditCardPayment.builder()
+                        .id(rs.getLong("id"))
+                        .createdAt(rs.getTimestamp("created_at").toInstant())
+                        .aggregateId((UUID) rs.getObject("aggregate_id"))
+                        .amount(rs.getBigDecimal("amount"))
+                        .cardCVC(rs.getString("cardcvc"))
+                        .cardExpiry(rs.getString("card_expiry"))
+                        .cardNumber(rs.getString("card_number"))
+                        .recipientDocument(rs.getString("recipient_document"))
+                        .status(PaymentStatus.fromCode(rs.getInt("status")))
+                        .build();
             }
         };
     }

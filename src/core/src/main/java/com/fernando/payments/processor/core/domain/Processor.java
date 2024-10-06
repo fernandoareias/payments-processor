@@ -1,7 +1,7 @@
-package com.fernando.payments.processor.webapi.domain.creditcards;
+package com.fernando.payments.processor.core.domain;
 
-import com.fernando.payments.processor.core.domain.Entity;
-import com.fernando.payments.processor.webapi.domain.creditcards.enums.ProcessorStatus;
+import com.fernando.payments.processor.core.domain.comon.Entity;
+import com.fernando.payments.processor.core.domain.enums.ProcessorStatus;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -12,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 
 @Table(name = "DB_PROCESSOR")
 @jakarta.persistence.Entity
-@AllArgsConstructor
 @Getter
 @Setter
+@SuperBuilder
 public class Processor extends Entity {
     private String externalId;
     private ProcessorStatus status;
@@ -22,5 +22,5 @@ public class Processor extends Entity {
 
     @ManyToOne
     @JoinColumn(name = "processors")
-    private PaymentProcessor paymentProcessor;
+    private CreditCardPayment creditCardPayment;
 }

@@ -1,6 +1,6 @@
-package com.fernando.payments.processor.workers.dominio.creditcards;
+package com.fernando.payments.processor.core.domain;
 
-import com.fernando.payments.processor.core.domain.Entity;
+import com.fernando.payments.processor.core.domain.comon.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -16,13 +16,10 @@ import java.util.Set;
 @Setter
 public class PaymentProcessor extends Entity {
 
-
-
     private String name;
 
     @OneToMany(mappedBy = "paymentProcessor")
     private Set<CreditCardPayment> payments;
 
-    @OneToMany(mappedBy = "paymentProcessor")
-    private Set<Processor> processors;
+
 }

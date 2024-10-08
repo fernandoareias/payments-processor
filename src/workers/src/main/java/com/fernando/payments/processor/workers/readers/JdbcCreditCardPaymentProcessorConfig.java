@@ -33,10 +33,7 @@ public class JdbcCreditCardPaymentProcessorConfig {
         return new BeanPropertyRowMapper<CreditCardPayment>() {
             @Override
             public CreditCardPayment mapRow(ResultSet rs, int rowNumber) throws SQLException {
-
-                var payment =  clienteRowMapper(rs);
-
-                return payment;
+                return clienteRowMapper(rs);
             }
 
             private CreditCardPayment clienteRowMapper(ResultSet rs) throws SQLException {

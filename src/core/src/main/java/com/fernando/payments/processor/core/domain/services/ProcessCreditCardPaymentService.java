@@ -16,7 +16,7 @@ public class ProcessCreditCardPaymentService implements DomainServices<CreditCar
     @Override
     public Processor execute(CreditCardPayment aggregate) {
 
-        var randomNumber = Math.random();
+        var randomNumber =  Math.ceil(Math.random() * 10);
 
         var status = randomNumber % 2 == 0 ? ProcessorStatus.PROCESSED : ProcessorStatus.ERROR;
 

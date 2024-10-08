@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.UUID;
+
 @Configuration
 public class JdbcCreditPaymentProcessorWriterConfig {
     @Autowired
@@ -21,29 +25,42 @@ public class JdbcCreditPaymentProcessorWriterConfig {
             @Override
             public void write(Chunk<? extends CreditCardPayment> items) throws Exception {
                 for (CreditCardPayment payment : items) {
-                    String insertPaymentSql = "INSERT INTO db_credit_card_payments (id, created_at, aggregate_id, amount, cardcvc, card_expiry, card_number, recipient_document, status, payment_processor_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    jdbcTemplate.update(insertPaymentSql,
-                            payment.getId(),
-                            payment.getCreatedAt(),
-                            payment.getAggregateId(),
+                    String updatePaymentSql = "UPDATE db_credit_card_payments SET amount = ?, cardcvc = ?, card_expiry = ?, card_number = ?, recipient_document = ?, status = ? WHERE id = ?";
+
+                    jdbcTemplate.update(updatePaymentSql,
                             payment.getAmount(),
                             payment.getCardCVC(),
                             payment.getCardExpiry(),
                             payment.getCardNumber(),
                             payment.getRecipientDocument(),
-                            payment.getStatus(),
-                            payment.getPaymentProcessor().getId()
+                            payment.getStatus().getCode(),
+                            payment.getId()
                     );
 
-                    String insertProcessorSql = "INSERT INTO db_processor (id, created_at, external_id, response, status, processors) VALUES (?, ?, ?, ?, ?, ?)";
-                    jdbcTemplate.update(insertProcessorSql,
-                            payment.getProcessors().stream().findFirst().get().getId(),
-                            payment.getProcessors().stream().findFirst().get().getCreatedAt(),
-                            payment.getProcessors().stream().findFirst().get().getExternalId(),
-                            payment.getProcessors().stream().findFirst().get().getResponse(),
-                            payment.getProcessors().stream().findFirst().get().getStatus(),
-                            payment.getProcessors().stream().findFirst().get().getId()
-                    );
+
+
+                    try {
+                        String insertProcessorSql = "INSERT INTO db_processor (id, created_at, response, status, processors) VALUES (DEFAULT, ?, ?, ?, ?)";
+
+                        var firstProcessor = payment.getProcessors().stream().findFirst()
+                                .orElseThrow(() -> new IllegalArgumentException("Nenhum processor encontrado"));
+
+                        Instant createdAt = firstProcessor.getCreatedAt();
+                        String response = firstProcessor.getResponse();
+                        int status = firstProcessor.getStatus().getCode();
+                        var paymentId = payment.getId();
+
+                        Timestamp timestamp = Timestamp.from(createdAt);
+
+                        jdbcTemplate.update("INSERT INTO db_processor (id, created_at, response, status, processors) VALUES (?, ?, ?, ?, ?)",
+                                UUID.randomUUID().toString(), Timestamp.from(createdAt), response, status, paymentId);
+
+                    } catch (IllegalArgumentException e) {
+                        System.err.println(e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         };

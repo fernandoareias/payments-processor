@@ -33,9 +33,7 @@ public class JdbcCreditPaymentProcessorWriterConfig {
                             payment.getId()
                     );
 
-
-
-                    String insertProcessorSql = "INSERT INTO db_processor (id, created_at, response, status, processors) VALUES (DEFAULT, ?, ?, ?, ?)";
+                    String insertProcessorSql = "INSERT INTO db_processor (created_at, response, status, processors) VALUES (?, ?, ?, ?)";
 
                     var firstProcessor = payment.getProcessors().stream().findFirst()
                             .orElseThrow(() -> new IllegalArgumentException("Nenhum processor encontrado"));
@@ -45,7 +43,7 @@ public class JdbcCreditPaymentProcessorWriterConfig {
                     int status = firstProcessor.getStatus().getCode();
                     Long paymentId = payment.getId();
 
-                    jdbcTemplate.update("INSERT INTO db_processor (created_at, response, status, processors) VALUES (?, ?, ?, ?)",
+                    jdbcTemplate.update(insertProcessorSql,
                             createdAt,
                             response,
                             status,

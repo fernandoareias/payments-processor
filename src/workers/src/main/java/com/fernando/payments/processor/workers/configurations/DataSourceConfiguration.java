@@ -1,11 +1,13 @@
 package com.fernando.payments.processor.workers.configurations;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -26,7 +28,7 @@ public class DataSourceConfiguration {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(DataSource springDataSource) {
-        return new DataSourceTransactionManager(springDataSource);
+    public PlatformTransactionManager transactionManagerApp(@Qualifier("appDataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 }

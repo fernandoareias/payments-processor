@@ -7,6 +7,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ public class CreditPaymentProcessorStepsConfig {
 
     @Bean
     public Step creditPaymentProcessorSteps(JobRepository jobRepository,
-                                            JdbcCursorItemReader<CreditCardPayment> reader,
+                                            JdbcPagingItemReader<CreditCardPayment> reader,
                                             CreditPaymentProcessor processor,
                                             ItemWriter<CreditCardPayment> writer) {
 

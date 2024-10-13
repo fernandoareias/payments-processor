@@ -3,7 +3,10 @@ package com.fernando.payments.processor.workers.readers;
 import com.fernando.payments.processor.core.domain.CreditCardPayment;
 import com.fernando.payments.processor.core.domain.enums.PaymentStatus;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,19 +16,30 @@ import org.springframework.jdbc.core.RowMapper;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Configuration
 public class JdbcCreditCardPaymentProcessorConfig {
 
     @Bean
-    public JdbcCursorItemReader<CreditCardPayment> jdbcCreditPaymentProcessorReader(
+    public JdbcPagingItemReader<CreditCardPayment> jdbcCreditPaymentProcessorReader(
             @Qualifier("appDataSource") DataSource dataSource) {
-        return new JdbcCursorItemReaderBuilder<CreditCardPayment>()
+
+        Map<String, Order> sortKeys = new HashMap<>();
+        sortKeys.put("id", Order.ASCENDING);
+
+
+        return new JdbcPagingItemReaderBuilder<CreditCardPayment>()
                 .name("jdbcCreditPaymentProcessorReader")
                 .dataSource(dataSource)
-                .sql("SELECT * FROM postgres.public.db_credit_card_payments WHERE status = '8'")
+                .selectClause("SELECT *")
+                .fromClause("FROM postgres.public.db_credit_card_payments")
+                .whereClause("WHERE status = '8'")
+                .sortKeys(sortKeys)
                 .rowMapper(rowMapper())
+                .pageSize(100)
                 .build();
     }
 

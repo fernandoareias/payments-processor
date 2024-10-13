@@ -6,13 +6,12 @@ import com.fernando.payments.processor.webapi.application.commands.ProcessCredit
 import com.fernando.payments.processor.webapi.application.commands.views.ProcessCreditCardPaymentCommandView;
 import com.fernando.payments.processor.webapi.apresentation.dtos.common.BaseResponse;
 import com.fernando.payments.processor.webapi.apresentation.dtos.requests.ProcessCreditCardPaymentRequest;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.UUID;
@@ -24,7 +23,13 @@ public class PaymentController {
     @Autowired
     private Mediator mediator;
 
+//    @ApiOperation("Lista todas as tarefas")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = 200, message = "Sucesso", response = ResponseEntity.class),
+//            @ApiResponse(code = 204, message = "Sem conteúdo"),
+//            @ApiResponse(code = 500, message = "Erro interno no servidor")})
     @PostMapping("/credit-cards")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<BaseResponse<ProcessCreditCardPaymentCommandView>> receiveCreditCardPaymentOrder(
             @RequestBody ProcessCreditCardPaymentRequest request) {
 

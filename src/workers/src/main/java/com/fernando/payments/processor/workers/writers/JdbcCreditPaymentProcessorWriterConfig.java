@@ -41,7 +41,7 @@ public class JdbcCreditPaymentProcessorWriterConfig {
                     Timestamp createdAt = Timestamp.from(firstProcessor.getCreatedAt());
                     String response = firstProcessor.getResponse();
                     int status = firstProcessor.getStatus().getCode();
-                    Long paymentId = payment.getId();
+                    long paymentId = payment.getId();
 
                     jdbcTemplate.update(insertProcessorSql,
                             createdAt,

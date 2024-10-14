@@ -29,7 +29,7 @@ public abstract class Entity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
 
     private Instant createdAt = Instant.now();
 }

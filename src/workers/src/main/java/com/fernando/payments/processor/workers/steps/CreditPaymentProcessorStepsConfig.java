@@ -1,6 +1,7 @@
 package com.fernando.payments.processor.workers.steps;
 
 import com.fernando.payments.processor.core.domain.CreditCardPayment;
+import com.fernando.payments.processor.workers.policies.CreditCardPaymentRetryPolicy;
 import com.fernando.payments.processor.workers.processors.CreditPaymentProcessor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -39,9 +40,14 @@ public class CreditPaymentProcessorStepsConfig {
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
-                .retry(Exception.class)
+                .retryPolicy(creditCardPaymentRetryPolicy())
                 .retryLimit(3)
                 .build();
+    }
+
+    @Bean
+    public CreditCardPaymentRetryPolicy creditCardPaymentRetryPolicy() {
+        return new CreditCardPaymentRetryPolicy();
     }
 
 }

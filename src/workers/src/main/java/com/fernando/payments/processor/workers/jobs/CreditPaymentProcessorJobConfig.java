@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class CreditPaymentProcessorJobConfig {
 
     @Bean
-    public Job creditPaymentProcessorJob(JobRepository jobRepository,
+    public Job processPaymentJob(JobRepository jobRepository,
                                          Step step1){
-        return new JobBuilder("creditPaymentProcessorJob", jobRepository)
+        return new JobBuilder("processPaymentJob", jobRepository)
                 .start(step1)
                 .incrementer(new RunIdIncrementer())
                 .build();
